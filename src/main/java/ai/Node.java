@@ -20,12 +20,10 @@ public class Node {
     private String name;
     private City current;
     private Set<City> unvisited;
-    private List<City> path;
 
-    public Node(City current, Set<City> unvisited, List<City> path) {
+    public Node(City current, Set<City> unvisited) {
         this.current = current;
         this.unvisited = unvisited;
-        this.path = path;
         /*
         System.out.println("Creating node.. ");
         System.out.println("  current: " + current.getName());
@@ -75,16 +73,6 @@ public class Node {
         return unvisited;
     }
 
-    public List<City> getPath() {
-        return path;
-    }
-
-    public void printPath(){
-        for (City city: path) {
-            System.out.print(city.getName() + " ");
-        }
-        System.out.println(getCurrent().getName());
-    }
 
     public Load getNearestDistFromUnvisited(City city) {
         Map<City, Load> map = city.getdMap();

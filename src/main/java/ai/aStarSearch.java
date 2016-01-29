@@ -60,11 +60,6 @@ public class AStarSearch {
                 problem.calculateF(neighbour, tmpGScore);
                 frontier.add(neighbour);
 
-                if (neighbour.getPath().size() == 5) {
-                    //System.out.println("2:fscore: " + neighbour.getFScore());
-                    //System.out.println("2:Current City " + neighbour.getCurrent().getName());
-                    //neighbour.printPath();
-                }
             }
         }
 

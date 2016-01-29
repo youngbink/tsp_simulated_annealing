@@ -45,7 +45,7 @@ public class TravelingSalesManProblem implements SearchProblem {
                 }
 
             }
-            this.firstState = new Node(firstCity, unvisited, path);
+            this.firstState = new Node(firstCity, unvisited);
             createEdges(unvisited, firstCity);
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,28 +74,22 @@ public class TravelingSalesManProblem implements SearchProblem {
         List<Node> neighbours = new ArrayList<>();
 
         Set<City> unvisited = node.getUnvisited();
-        List<City> currentPath = node.getPath();
-        List<City> newPath;
 
         Set<City> newUnvisited;
 
         if (unvisited.size() == 0) {
-            newPath = new ArrayList<>(currentPath);
-            newPath.add(node.getCurrent());
             newUnvisited = new HashSet<>(unvisited);
-            neighbours.add(new Node(firstCity, newUnvisited, newPath));
+            neighbours.add(new Node(firstCity, newUnvisited));
             return neighbours;
         }
 
         for (City neighbour : unvisited) {
-            newPath = new ArrayList<>(currentPath);
-            newPath.add(node.getCurrent());
 
             newUnvisited = new HashSet<>(unvisited);
 
             newUnvisited.remove(neighbour);
 
-            neighbours.add(new Node(neighbour, newUnvisited, newPath));
+            neighbours.add(new Node(neighbour, newUnvisited));
         }
 
         return neighbours;
@@ -134,35 +128,13 @@ public class TravelingSalesManProblem implements SearchProblem {
     }
 
     private double calculateMST(Node neighbour) {
-        Set<City> unvisited = new HashSet<>(neighbour.getUnvisited());
-        unvisited.remove(neighbour.getCurrent());
-        Set<City> left = new HashSet<>(unvisited);
-        List<Load> loads = left.stream().map(neighbour::getNearestDistFromUnvisited).collect(Collectors.toList());
-
-        /*
-        for (City city : left) {
-            loads.add(neighbour.getNearestDistFromUnvisited(city));
-        }
-         */
-        Collections.sort(loads, comparator);
-
+        Set<City> unvisited = neighbour.getUnvisited();
         double sum = 0.0f;
-        City c1, c2;
-        for (Load load : loads) {
-            if (left.isEmpty())
-                break;
-
-            c1 = load.getC1();
-            c2 = load.getC2();
-            if (left.contains(c1) || left.contains(c2)) {
-                if (!unvisited.contains(c1) && !unvisited.contains(c2)) {
-                    sum += load.getDist();
-                    left.remove(c1);
-                    left.remove(c2);
-                }
-            }
+        for (City city : unvisited) {
+            if (city == neighbour.getCurrent())
+                continue;
+            sum += neighbour.getNearestDistFromUnvisited(city).getDist();
         }
-        //System.out.println();
         return sum;
     }
 
