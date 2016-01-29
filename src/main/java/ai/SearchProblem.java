@@ -10,7 +10,9 @@ public interface SearchProblem {
     boolean goalTest(final Node node);
     List<Node> takeActions(final Node node);
 
-    int getDist(Node node, Node neighbour);
+    double getDist(Node node, Node neighbour);
 
-    void calculateF(Node neighbour, int tmpGScore);
+    void calculateF(Node neighbour, double tmpGScore);
+
+    void visit(Node node);
 }

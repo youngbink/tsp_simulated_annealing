@@ -5,6 +5,8 @@ package ai;
  */
 public class Edge {
     private int dist;
+    String n1;
+    String n2;
 
     public int getDist() {
         return dist;
