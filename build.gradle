@@ -2,8 +2,11 @@ group 'ai'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'idea'
 
-sourceCompatibility = 1.5
+compileJava {
+    sourceCompatibility = '1.8'
+}
 
 repositories {
     mavenCentral()
