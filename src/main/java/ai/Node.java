@@ -22,10 +22,13 @@ public class Node {
         this.current = current;
         this.unvisited = unvisited;
         this.path = path;
+        /*
         System.out.println("Creating node.. ");
         System.out.println("  current: " + current.getName());
         System.out.println("  path");
+
         this.printPath();
+        */
     }
 
     public double getGScore() {
@@ -76,6 +79,6 @@ public class Node {
         for (City city: path) {
             System.out.print(city.getName() + " ");
         }
-        System.out.println("");
+        System.out.println(getCurrent().getName());
     }
 }

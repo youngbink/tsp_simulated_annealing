@@ -73,9 +73,10 @@ public class TravelingSalesManProblem implements SearchProblem {
 
     private void sortEdges(List<City> allCities) {
         for (City city : allCities) {
-            System.out.println("City.. " + city.getName());
+            //System.out.println("City.. " + city.getName());
             city.setdMap(sortByValues(city.getdMap()));
 
+            /*
             Set set2 = city.getdMap().entrySet();
             Iterator iterator2 = set2.iterator();
             while(iterator2.hasNext()) {
@@ -84,6 +85,7 @@ public class TravelingSalesManProblem implements SearchProblem {
                 System.out.println(me2.getValue());
             }
             System.out.println(" ");
+            */
         }
     }
 
@@ -112,6 +114,14 @@ public class TravelingSalesManProblem implements SearchProblem {
 
         Set<City> newUnvisited;
 
+        if (unvisited.size() == 0) {
+            //System.out.println(" ****** no more.. " + node.getCurrent().getName());
+            newPath = new ArrayList<>(currentPath);
+            newPath.add(node.getCurrent());
+            newUnvisited = new HashSet<>(unvisited);
+            neighbours.add(new Node(firstCity, newUnvisited, newPath));
+            return neighbours;
+        }
 
         for (City neighbour : unvisited) {
             newPath = new ArrayList<>(currentPath);
@@ -123,6 +133,8 @@ public class TravelingSalesManProblem implements SearchProblem {
 
             neighbours.add(new Node(neighbour, newUnvisited, newPath));
         }
+
+
 
         return neighbours;
     }

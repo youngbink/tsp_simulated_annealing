@@ -1,27 +1,40 @@
 package ai;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by youngbinkim on 1/26/16.
  */
 public class AStarSearch {
-    public Node run(final SearchProblem problem) {
+    public Node run(final SearchProblem problem, AtomicInteger numNodes) {
         Node node = problem.getInitialState();
         final PriorityQueue<Node> frontier = new PriorityQueue(16, new NodeComparator());
         frontier.add(node);
+        //int numNodeExpanded = 0;
 
         while(!frontier.isEmpty()) {
-            node = frontier.poll();
+            numNodes.getAndIncrement();
+            //numNodeExpanded++;
 
-            if (problem.goalTest(node))
+            node = frontier.poll();
+/*
+            //if (node.getPath().size() == 5) {
+                System.out.println("fscore: " + node.getFScore());
+                System.out.println("Current City " + node.getCurrent().getName());
+                node.printPath();
+            //}
+            */
+
+            if (problem.goalTest(node)) {
+                //System.out.println("node expanded " + numNodeExpanded);
                 return node;
+            }
 
             double currentGScore = node.getGScore(); //gScoreMap.get(node.getName());
 
-            System.out.println("Node: " + " with score : " + currentGScore);
-            System.out.println("Current City " + node.getCurrent().getName());
-            node.printPath();
+
+
 
             List<Node> neighbours = problem.takeActions(node);
 
@@ -29,6 +42,8 @@ public class AStarSearch {
             node.setState(Node.STATE_CLOSED);
             for (Node neighbour : neighbours) {
                 double tmpGScore = currentGScore + problem.getDist(node, neighbour);
+                //System.out.println(" neighbour " + neighbour.getCurrent().getName());
+               // System.out.println("  g score: " + tmpGScore);
                 if (neighbour.getState() == Node.STATE_CLOSED) {
                     System.out.println("should not reach... closed !");
                     continue;
@@ -43,8 +58,15 @@ public class AStarSearch {
                 neighbour.setState(Node.STATE_OPEN);
                 problem.calculateF(neighbour, tmpGScore);
                 frontier.add(neighbour);
+
+                if (neighbour.getPath().size() == 5) {
+                    //System.out.println("2:fscore: " + neighbour.getFScore());
+                    //System.out.println("2:Current City " + neighbour.getCurrent().getName());
+                    //neighbour.printPath();
+                }
             }
         }
+
 
         return null;
     }
