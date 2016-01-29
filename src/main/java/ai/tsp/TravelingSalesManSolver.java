@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TravelingSalesManSolver {
     public static void main(String ...args) {
         TravelingSalesManSolver solver = new TravelingSalesManSolver();
-        for (int i = 1; i <= 12; i++) {
+        for (int i = 1; i <= 11; i++) {
             solver.processFilesInDir(String.valueOf(i));
         }
 

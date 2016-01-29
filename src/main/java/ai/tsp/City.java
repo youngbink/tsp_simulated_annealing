@@ -1,4 +1,4 @@
-package ai;
+package ai.tsp;
 
 import java.util.HashMap;
 import java.util.Map;

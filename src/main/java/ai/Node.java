@@ -1,5 +1,7 @@
 package ai;
 
+import ai.tsp.City;
+
 import java.util.List;
 import java.util.Set;
 
