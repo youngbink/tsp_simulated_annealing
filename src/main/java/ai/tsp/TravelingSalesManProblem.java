@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class TravelingSalesManProblem implements SearchProblem {
     Node firstState;
     City firstCity;
-    LoadComparator comparator = new LoadComparator();
 
     public void initiateProblem(final String fileName) {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
@@ -150,32 +149,6 @@ Set<City> unvisited = neighbour.getUnvisited();
             sum += neighbour.getNearestDistFromUnvisited(city).getDist();
         }
         return sum;
-/*
-        Set<City> unvisited = new HashSet<>(neighbour.getUnvisited());
-        unvisited.remove(neighbour.getCurrent());
-        Set<City> left = new HashSet<>(unvisited);
-        List<Load> loads = left.stream().map(neighbour::getNearestDistFromUnvisited).collect(Collectors.toList());
-
-        Collections.sort(loads, comparator);
-
-        double sum = 0.0f;
-        City c1, c2;
-        for (Load load : loads) {
-            if (left.isEmpty())
-                break;
-
-            c1 = load.getC1();
-            c2 = load.getC2();
-            if (left.contains(c1) || left.contains(c2)) {
-                if (unvisited.contains(c1) && unvisited.contains(c2)) {
-                    sum += load.getDist();
-                    left.remove(c1);
-                    left.remove(c2);
-                }
-            }
-        }
-        //System.out.println();
-        return sum;*/
     }
 
     private void createEdges(Set<City> unvisited, City firstCity) {

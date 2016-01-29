@@ -26,13 +26,6 @@ public class Node {
         this.current = current;
         this.unvisited = unvisited;
         this.path = path;
-        /*
-        System.out.println("Creating node.. ");
-        System.out.println("  current: " + current.getName());
-        System.out.println("  path");
-
-        this.printPath();
-        */
     }
 
     public double getGScore() {
