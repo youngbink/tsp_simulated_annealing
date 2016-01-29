@@ -16,7 +16,7 @@ public class TravelingSalesManSolver {
     public static void main(String ...args) {
         long start = System.currentTimeMillis();
         TravelingSalesManSolver solver = new TravelingSalesManSolver();
-        for (int i = 14; i <= 14; i++) {
+        for (int i = 1; i <= 16; i++) {
             solver.processFilesInDir(String.valueOf(i));
         }
 
