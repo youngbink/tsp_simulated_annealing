@@ -1,5 +1,8 @@
 package ai;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * Created by youngbinkim on 1/26/16.
  */
@@ -11,6 +14,19 @@ public class Node {
     private int state;
     private double FScore;
     private String name;
+    private City current;
+    private Set<City> unvisited;
+    private List<City> path;
+
+    public Node(City current, Set<City> unvisited, List<City> path) {
+        this.current = current;
+        this.unvisited = unvisited;
+        this.path = path;
+        System.out.println("Creating node.. ");
+        System.out.println("  current: " + current.getName());
+        System.out.println("  path");
+        this.printPath();
+    }
 
     public double getGScore() {
         return GScore;
@@ -42,5 +58,24 @@ public class Node {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public City getCurrent() {
+        return current;
+    }
+
+    public Set<City> getUnvisited() {
+        return unvisited;
+    }
+
+    public List<City> getPath() {
+        return path;
+    }
+
+    public void printPath(){
+        for (City city: path) {
+            System.out.print(city.getName() + " ");
+        }
+        System.out.println("");
     }
 }

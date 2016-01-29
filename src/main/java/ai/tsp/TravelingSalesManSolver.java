@@ -17,12 +17,15 @@ public class TravelingSalesManSolver {
         //solver.getAllFilesFromDir(String.valueOf(dirName));
 
         TravelingSalesManProblem problem = new TravelingSalesManProblem();
-        problem.initiateProblem("3/instance_1.txt");
+        problem.initiateProblem("5/instance_1.txt");
+
         Node node = new AStarSearch().run(problem);
+        /*
         if (node != null) {
             solver.printResult(node);
             //System.out.println(" " + problem.getInitialState().getName());
         }
+        */
 
     }
 

@@ -1,10 +1,7 @@
 package ai.tsp;
 
 
-import ai.Edge;
-import ai.Node;
-import ai.Pair;
-import ai.SearchProblem;
+import ai.*;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -15,15 +12,16 @@ import java.util.*;
  * Created by youngbinkim on 1/27/16.
  */
 public class TravelingSalesManProblem implements SearchProblem {
-    Set<Node> unvisited = new HashSet<>();
-    Set<Node> visited = new HashSet<>();
-    List<Edge> edges = new ArrayList<>();
-    Node firstNode;
+    Node firstState;
+    City firstCity;
 
     public void initiateProblem(final String fileName) {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         boolean isFirstNode = true;
+        Set<City> unvisited = new HashSet<>();
+        List<City> path = new ArrayList<>();
+
         //Read File Line By Line
         try {
             String strLine;
@@ -34,45 +32,104 @@ public class TravelingSalesManProblem implements SearchProblem {
                     continue;
                 }
 
-                Node node = new Node(tokens[0], Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]));
+                City city = new City(tokens[0], Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]));
+
                 if (isFirstNode) {
-                    //visited.add(node);
-                    firstNode = node;
+                    firstCity = city;
                     isFirstNode = false;
+                } else {
+                    unvisited.add(city);
                 }
 
-                unvisited.add(node);
-                //}
             }
-            createEdges();
+            this.firstState = new Node(firstCity, unvisited, path);
+            createEdges(unvisited, firstCity);
         } catch (Exception e) {
-            System.err.println("Exception occurred while initating the problem .. " + e);
+            System.err.println("Exception occurred while initiating the problem .. " + e);
         }
     }
 
-    private void createEdges() {
+    private void createEdges(Set<City> unvisited, City firstCity) {
+        List<City> allCities = new ArrayList<>(unvisited);
+        allCities.add(firstCity);
+        City c1, c2;
+        double dist;
 
+        for (int i = 0; i < allCities.size(); i++) {
+            for (int j = 0; j < allCities.size(); j++) {
+                if (i == j)
+                    continue;
+
+                c1 = allCities.get(i);
+                c2 = allCities.get(j);
+
+                dist = getCityDistance(c1, c2);
+                c1.addCityToMap(c2, dist);
+                c2.addCityToMap(c1, dist);
+            }
+        }
+        sortEdges(allCities);
+    }
+
+    private void sortEdges(List<City> allCities) {
+        for (City city : allCities) {
+            System.out.println("City.. " + city.getName());
+            city.setdMap(sortByValues(city.getdMap()));
+
+            Set set2 = city.getdMap().entrySet();
+            Iterator iterator2 = set2.iterator();
+            while(iterator2.hasNext()) {
+                Map.Entry<City, Double> me2 = (Map.Entry)iterator2.next();
+                System.out.print(me2.getKey().getName() + ": ");
+                System.out.println(me2.getValue());
+            }
+            System.out.println(" ");
+        }
+    }
+
+    private double getCityDistance(City c1, City c2) {
+        return Math.sqrt(Math.pow((c1.getX() - c2.getX()), 2) +
+                Math.pow((c1.getY() - c2.getY()), 2));
     }
 
     @Override
     public Node getInitialState() {
-        return firstNode;
+        return firstState;
     }
 
     @Override
     public boolean goalTest(final Node node) {
-        return unvisited.isEmpty();
+        return node.getCurrent() == firstCity && node.getUnvisited().isEmpty();
     }
 
     @Override
     public List<Node> takeActions(final Node node) {
-        return new ArrayList<>(unvisited);
+        List<Node> neighbours = new ArrayList<>();
+
+        Set<City> unvisited = node.getUnvisited();
+        List<City> currentPath = node.getPath();
+        List<City> newPath;
+
+        Set<City> newUnvisited;
+
+
+        for (City neighbour : unvisited) {
+            newPath = new ArrayList<>(currentPath);
+            newPath.add(node.getCurrent());
+
+            newUnvisited = new HashSet<>(unvisited);
+
+            newUnvisited.remove(neighbour);
+
+            neighbours.add(new Node(neighbour, newUnvisited, newPath));
+        }
+
+        return neighbours;
     }
 
     @Override
     public double getDist(final Node node, final Node neighbour) {
-        return Math.sqrt(Math.pow((neighbour.getX() - node.getX()), 2) +
-                Math.pow((neighbour.getY() - node.getY()), 2));
+        return neighbour.getCurrent().getdMap().get(node.getCurrent());
     }
     /*
     @Override
@@ -94,7 +151,23 @@ public class TravelingSalesManProblem implements SearchProblem {
 
     @Override
     public void visit(Node node) {
-        unvisited.remove(node);
-        visited.add(node);
+        //unvisited.remove(node);
+        //visited.add(node);
+    }
+
+    private static HashMap sortByValues(Map map) {
+        List list = new LinkedList(map.entrySet());
+        // Defined Custom Comparator here
+        Collections.sort(list, (o1, o2) -> ((Comparable) ((Map.Entry) (o1)).getValue())
+                .compareTo(((Map.Entry) (o2)).getValue()));
+
+        // Here I am copying the sorted list in HashMap
+        // using LinkedHashMap to preserve the insertion order
+        HashMap sortedHashMap = new LinkedHashMap();
+        for (Iterator it = list.iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            sortedHashMap.put(entry.getKey(), entry.getValue());
+        }
+        return sortedHashMap;
     }
 }
