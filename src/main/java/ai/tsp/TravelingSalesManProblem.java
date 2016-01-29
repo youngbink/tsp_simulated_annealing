@@ -45,7 +45,7 @@ public class TravelingSalesManProblem implements SearchProblem {
                 }
 
             }
-            this.firstState = new Node(firstCity, unvisited);
+            this.firstState = new Node(firstCity, unvisited, new ArrayList<>());
             createEdges(unvisited, firstCity);
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,22 +74,27 @@ public class TravelingSalesManProblem implements SearchProblem {
         List<Node> neighbours = new ArrayList<>();
 
         Set<City> unvisited = node.getUnvisited();
+        List<City> currentPath = node.getPath();
+        List<City> newPath;
 
         Set<City> newUnvisited;
 
         if (unvisited.size() == 0) {
+            newPath = new ArrayList<>(currentPath);
+            newPath.add(node.getCurrent());
             newUnvisited = new HashSet<>(unvisited);
-            neighbours.add(new Node(firstCity, newUnvisited));
+            neighbours.add(new Node(firstCity, newUnvisited, newPath));
             return neighbours;
         }
 
         for (City neighbour : unvisited) {
-
+            newPath = new ArrayList<>(currentPath);
+            newPath.add(node.getCurrent());
             newUnvisited = new HashSet<>(unvisited);
 
             newUnvisited.remove(neighbour);
 
-            neighbours.add(new Node(neighbour, newUnvisited));
+            neighbours.add(new Node(neighbour, newUnvisited, newPath));
         }
 
         return neighbours;

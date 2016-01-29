@@ -20,10 +20,12 @@ public class Node {
     private String name;
     private City current;
     private Set<City> unvisited;
+    private List<City> path;
 
-    public Node(City current, Set<City> unvisited) {
+    public Node(City current, Set<City> unvisited, List<City> path) {
         this.current = current;
         this.unvisited = unvisited;
+        this.path = path;
         /*
         System.out.println("Creating node.. ");
         System.out.println("  current: " + current.getName());
@@ -83,5 +85,9 @@ public class Node {
             }
         }
         return null;
+    }
+
+    public List<City> getPath() {
+        return path;
     }
 }

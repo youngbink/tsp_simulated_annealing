@@ -20,6 +20,7 @@ public class TravelingSalesManSolver {
             solver.processFilesInDir(String.valueOf(i));
         }
 
+        //System.out.println("nodes for 36 " + solver.processFile("problem36"));
         long end = System.currentTimeMillis();
         System.out.println("Time taken : " + (((end - start) * 1.0) / 1000));
 
