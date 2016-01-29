@@ -28,7 +28,7 @@ public class TravelingSalesManProblem implements SearchProblem {
             while ((strLine = br.readLine()) != null)   {
                 String[] tokens = strLine.split(" ");
                 if (tokens.length < 3) {
-                    System.out.println("Invalid tokens.. " + strLine);
+                   //System.out.println("Invalid tokens.. " + strLine);
                     continue;
                 }
 

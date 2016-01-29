@@ -14,10 +14,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TravelingSalesManSolver {
     public static void main(String ...args) {
         TravelingSalesManSolver solver = new TravelingSalesManSolver();
-        int dirName = 1;
-        //solver.getAllFilesFromDir(String.valueOf(dirName));
+        for (int i = 1; i <= 12; i++) {
+            solver.processFilesInDir(String.valueOf(i));
+        }
 
-        solver.processFile("5/instance_1.txt");
+
+        //solver.processFile("1/instance_1.txt");
 
         /*
         if (node != null) {
@@ -30,13 +32,16 @@ public class TravelingSalesManSolver {
 
     public void processFilesInDir(final String dirName) {
         File folder = new File(getClass().getClassLoader().getResource(dirName).getFile());
+        double sum = 0;
         for (final File fileEntry : folder.listFiles()) {
             if (fileEntry.isDirectory()) {
                 System.err.println("What is directory doing in here? " + fileEntry.getName());
             } else {
+                sum += processFile(dirName + "/" + fileEntry.getName());
                 //fileList.add(fileEntry.getName());
             }
         }
+        System.out.println("Total average for dir : " + dirName + ": " + sum / folder.listFiles().length);
     }
 
     public int processFile(final String fileName) {
@@ -45,8 +50,8 @@ public class TravelingSalesManSolver {
 
         AtomicInteger numNodes = new AtomicInteger(0);
         Node node = new AStarSearch().run(problem, numNodes);
-        System.out.println("# of Node: " +numNodes);
-        node.printPath();
+        //System.out.println("# of Node: " +numNodes);
+        //node.printPath();
         return numNodes.get();
     }
 }
