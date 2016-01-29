@@ -4,6 +4,7 @@ import ai.AStarSearch;
 import ai.Node;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,11 +14,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TravelingSalesManSolver {
     public static void main(String ...args) {
+        long start = System.currentTimeMillis();
         TravelingSalesManSolver solver = new TravelingSalesManSolver();
-        for (int i = 1; i <= 11; i++) {
+        for (int i = 14; i <= 14; i++) {
             solver.processFilesInDir(String.valueOf(i));
         }
 
+        long end = System.currentTimeMillis();
+        System.out.println("Time taken : " + (((end - start) * 1.0) / 1000));
 
         //solver.processFile("1/instance_1.txt");
 

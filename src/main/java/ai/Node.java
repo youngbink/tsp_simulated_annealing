@@ -1,8 +1,10 @@
 package ai;
 
 import ai.tsp.City;
+import ai.tsp.Load;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -82,5 +84,16 @@ public class Node {
             System.out.print(city.getName() + " ");
         }
         System.out.println(getCurrent().getName());
+    }
+
+    public Load getNearestDistFromUnvisited(City city) {
+        Map<City, Load> map = city.getdMap();
+        for (Map.Entry<City, Load> entry : map.entrySet())
+        {
+            if (unvisited.contains(entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 }

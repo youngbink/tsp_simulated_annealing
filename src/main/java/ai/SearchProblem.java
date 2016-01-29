@@ -13,6 +13,4 @@ public interface SearchProblem {
     double getDist(Node node, Node neighbour);
 
     void calculateF(Node neighbour, double tmpGScore);
-
-    void visit(Node node);
 }

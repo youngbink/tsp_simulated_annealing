@@ -14,7 +14,7 @@ public class AStarSearch {
         //int numNodeExpanded = 0;
 
         while(!frontier.isEmpty()) {
-            numNodes.getAndIncrement();
+
             //numNodeExpanded++;
 
             node = frontier.poll();
@@ -41,6 +41,7 @@ public class AStarSearch {
 
             node.setState(Node.STATE_CLOSED);
             for (Node neighbour : neighbours) {
+                numNodes.getAndIncrement();
                 double tmpGScore = currentGScore + problem.getDist(node, neighbour);
                 //System.out.println(" neighbour " + neighbour.getCurrent().getName());
                // System.out.println("  g score: " + tmpGScore);

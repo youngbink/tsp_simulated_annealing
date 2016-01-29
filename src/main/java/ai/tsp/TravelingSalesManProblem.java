@@ -2,11 +2,13 @@ package ai.tsp;
 
 
 import ai.*;
+import com.sun.javafx.geom.Edge;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by youngbinkim on 1/27/16.
@@ -14,6 +16,7 @@ import java.util.*;
 public class TravelingSalesManProblem implements SearchProblem {
     Node firstState;
     City firstCity;
+    LoadComparator comparator = new LoadComparator();
 
     public void initiateProblem(final String fileName) {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
@@ -45,49 +48,11 @@ public class TravelingSalesManProblem implements SearchProblem {
             this.firstState = new Node(firstCity, unvisited, path);
             createEdges(unvisited, firstCity);
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println("Exception occurred while initiating the problem .. " + e);
         }
     }
 
-    private void createEdges(Set<City> unvisited, City firstCity) {
-        List<City> allCities = new ArrayList<>(unvisited);
-        allCities.add(firstCity);
-        City c1, c2;
-        double dist;
-
-        for (int i = 0; i < allCities.size(); i++) {
-            for (int j = 0; j < allCities.size(); j++) {
-                if (i == j)
-                    continue;
-
-                c1 = allCities.get(i);
-                c2 = allCities.get(j);
-
-                dist = getCityDistance(c1, c2);
-                c1.addCityToMap(c2, dist);
-                c2.addCityToMap(c1, dist);
-            }
-        }
-        sortEdges(allCities);
-    }
-
-    private void sortEdges(List<City> allCities) {
-        for (City city : allCities) {
-            //System.out.println("City.. " + city.getName());
-            city.setdMap(sortByValues(city.getdMap()));
-
-            /*
-            Set set2 = city.getdMap().entrySet();
-            Iterator iterator2 = set2.iterator();
-            while(iterator2.hasNext()) {
-                Map.Entry<City, Double> me2 = (Map.Entry)iterator2.next();
-                System.out.print(me2.getKey().getName() + ": ");
-                System.out.println(me2.getValue());
-            }
-            System.out.println(" ");
-            */
-        }
-    }
 
     private double getCityDistance(City c1, City c2) {
         return Math.sqrt(Math.pow((c1.getX() - c2.getX()), 2) +
@@ -115,7 +80,6 @@ public class TravelingSalesManProblem implements SearchProblem {
         Set<City> newUnvisited;
 
         if (unvisited.size() == 0) {
-            //System.out.println(" ****** no more.. " + node.getCurrent().getName());
             newPath = new ArrayList<>(currentPath);
             newPath.add(node.getCurrent());
             newUnvisited = new HashSet<>(unvisited);
@@ -134,44 +98,121 @@ public class TravelingSalesManProblem implements SearchProblem {
             neighbours.add(new Node(neighbour, newUnvisited, newPath));
         }
 
-
-
         return neighbours;
     }
 
     @Override
     public double getDist(final Node node, final Node neighbour) {
-        return neighbour.getCurrent().getdMap().get(node.getCurrent());
+        return neighbour.getCurrent().getdMap().get(node.getCurrent()).getDist();
     }
-    /*
-    @Override
-    public int getDist(Node node, Node neighbour) {
-        Pair<Character, Character> pair;
-        char firstName = node.getName();
-        char secondName = node.getName();
-        if (firstName > secondName)
-            pair = new Pair<>(secondName, firstName);
-        else
-            pair = new Pair<>(firstName, secondName);
-        return edgesMap.get(pair).getDist();
-    }*/
 
     @Override
     public void calculateF(final Node neighbour, final double tmpGScore) {
-        neighbour.setFScore(0 + tmpGScore);
+        neighbour.setFScore(heuristic(neighbour) + tmpGScore);
+        //neighbour.setFScore(0 + tmpGScore);
     }
 
-    @Override
-    public void visit(Node node) {
-        //unvisited.remove(node);
-        //visited.add(node);
+    private double heuristic(Node neighbour) {
+        if (neighbour.getUnvisited().size() == 0)
+            return 0.0f;
+        else if (neighbour.getUnvisited().size() == 1)
+            return neighbour.getCurrent().getdMap().get(firstCity).getDist();
+
+        double dist1 = neighbour.getNearestDistFromUnvisited(neighbour.getCurrent()).getDist();
+        double dist2 = calculateMST(neighbour);
+        double dist3 = neighbour.getNearestDistFromUnvisited(firstCity).getDist();
+        return dist1 + dist2 + dist3;
+
+        /*
+        List<City> cities = new ArrayList<>(neighbour.getUnvisited());
+        List<Double> dists = new ArrayList<>();
+        for (City city : cities) {
+            dists.addAll(city.getdMap().values());
+        }
+        */
+        //return 0;
+    }
+
+    private double calculateMST(Node neighbour) {
+        Set<City> unvisited = new HashSet<>(neighbour.getUnvisited());
+        unvisited.remove(neighbour.getCurrent());
+        Set<City> left = new HashSet<>(unvisited);
+        List<Load> loads = left.stream().map(neighbour::getNearestDistFromUnvisited).collect(Collectors.toList());
+
+        /*
+        for (City city : left) {
+            loads.add(neighbour.getNearestDistFromUnvisited(city));
+        }
+         */
+        Collections.sort(loads, comparator);
+
+        double sum = 0.0f;
+        City c1, c2;
+        for (Load load : loads) {
+            if (left.isEmpty())
+                break;
+
+            c1 = load.getC1();
+            c2 = load.getC2();
+            if (left.contains(c1) || left.contains(c2)) {
+                if (!unvisited.contains(c1) && !unvisited.contains(c2)) {
+                    sum += load.getDist();
+                    left.remove(c1);
+                    left.remove(c2);
+                }
+            }
+        }
+        //System.out.println();
+        return sum;
+    }
+
+    private void createEdges(Set<City> unvisited, City firstCity) {
+        List<City> allCities = new ArrayList<>(unvisited);
+        allCities.add(firstCity);
+        City c1, c2;
+        Load load;
+        double dist;
+
+        for (int i = 0; i < allCities.size(); i++) {
+            for (int j = 0; j < allCities.size(); j++) {
+                if (i == j)
+                    continue;
+
+                c1 = allCities.get(i);
+                c2 = allCities.get(j);
+
+                dist = getCityDistance(c1, c2);
+                load = new Load(c1, c2, dist);
+                c1.addCityToMap(c2, load);
+                c2.addCityToMap(c1, load);
+            }
+        }
+        sortEdges(allCities);
+    }
+
+    private void sortEdges(List<City> allCities) {
+        for (City city : allCities) {
+            //System.out.println("City.. " + city.getName());
+            city.setdMap(sortByValues(city.getdMap()));
+
+            /*
+            Set set2 = city.getdMap().entrySet();
+            Iterator iterator2 = set2.iterator();
+            while(iterator2.hasNext()) {
+                Map.Entry<City, Double> me2 = (Map.Entry)iterator2.next();
+                System.out.print(me2.getKey().getName() + ": ");
+                System.out.println(me2.getValue());
+            }
+            System.out.println(" ");
+            */
+        }
     }
 
     private static HashMap sortByValues(Map map) {
         List list = new LinkedList(map.entrySet());
         // Defined Custom Comparator here
-        Collections.sort(list, (o1, o2) -> ((Comparable) ((Map.Entry) (o1)).getValue())
-                .compareTo(((Map.Entry) (o2)).getValue()));
+        Collections.sort(list, (o1, o2) -> ((Comparable) ((Map.Entry<City, Load>) (o1)).getValue().getDist())
+                .compareTo(((Map.Entry<City, Load>) (o2)).getValue().getDist()));
 
         // Here I am copying the sorted list in HashMap
         // using LinkedHashMap to preserve the insertion order
