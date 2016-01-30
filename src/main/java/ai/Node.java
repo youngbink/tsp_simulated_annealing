@@ -1,7 +1,6 @@
 package ai;
 
 import ai.tsp.City;
-import ai.tsp.Load;
 
 import java.util.List;
 import java.util.Map;
@@ -68,19 +67,38 @@ public class Node {
         return unvisited;
     }
 
+    public void printPath(){
+        for (City city : path) {
+            System.out.print(city.getName() + " ");
+        }
+        System.out.println(current.getName());
+    }
 
-    public Load getNearestDistFromUnvisited(City city) {
-        Map<City, Load> map = city.getdMap();
-        for (Map.Entry<City, Load> entry : map.entrySet())
+    public double getNearestDistFromUnvisited(City city) {
+        Map<City, Double> map = city.getdMap();
+        for (Map.Entry<City, Double> entry : map.entrySet())
         {
             if (unvisited.contains(entry.getKey())) {
                 return entry.getValue();
             }
         }
-        return null;
+        return Double.MAX_VALUE;
+    }
+
+    public double getNearestDistFromUnvisited(City city, City city2) {
+        Map<City, Double> map = city.getdMap();
+        for (Map.Entry<City, Double> entry : map.entrySet())
+        {
+            if (entry.getKey() != city2 && unvisited.contains(entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+        return Double.MAX_VALUE;
     }
 
     public List<City> getPath() {
         return path;
     }
+
+
 }

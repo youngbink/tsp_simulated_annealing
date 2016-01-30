@@ -10,7 +10,7 @@ public class City {
     String name;
     int x;
     int y;
-    Map<City, Load> dMap = new HashMap<>();
+    Map<City, Double> dMap = new HashMap<>(); // contains (neighbour, distance to neighbour)
 
     public City (String name, int x, int y) {
         this.name = name;
@@ -26,15 +26,15 @@ public class City {
         return y;
     }
 
-    public void addCityToMap(City neighbour, Load load) {
-        dMap.put(neighbour, load);
+    public void addCityToMap(City neighbour, Double dist) {
+        dMap.put(neighbour, dist);
     }
 
-    public Map<City, Load> getdMap() {
+    public Map<City, Double> getdMap() {
         return dMap;
     }
 
-    public void setdMap(Map<City, Load> dMap) {
+    public void setdMap(Map<City, Double> dMap) {
         this.dMap = dMap;
     }
 

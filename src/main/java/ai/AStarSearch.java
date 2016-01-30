@@ -5,6 +5,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by youngbinkim on 1/26/16.
+ *
+ * General AStarSearch algorithm..
  */
 public class AStarSearch {
     public Node run(final SearchProblem problem, AtomicInteger numNodes) {

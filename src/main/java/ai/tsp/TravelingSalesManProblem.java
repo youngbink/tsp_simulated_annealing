@@ -22,7 +22,6 @@ public class TravelingSalesManProblem implements SearchProblem {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         boolean isFirstNode = true;
         Set<City> unvisited = new HashSet<>();
-        List<City> path = new ArrayList<>();
 
         //Read File Line By Line
         try {
@@ -79,6 +78,8 @@ public class TravelingSalesManProblem implements SearchProblem {
         Set<City> newUnvisited;
 
         if (unvisited.size() == 0) {
+            //System.out.println(node.getCurrent().getName());
+            //node.printPath();
             newPath = new ArrayList<>(currentPath);
             newPath.add(node.getCurrent());
             newUnvisited = new HashSet<>(unvisited);
@@ -101,7 +102,7 @@ public class TravelingSalesManProblem implements SearchProblem {
 
     @Override
     public double getDist(final Node node, final Node neighbour) {
-        return neighbour.getCurrent().getdMap().get(node.getCurrent()).getDist();
+        return neighbour.getCurrent().getdMap().get(node.getCurrent());
     }
 
     @Override
@@ -111,42 +112,26 @@ public class TravelingSalesManProblem implements SearchProblem {
     }
 
     private double heuristic(Node neighbour) {
-        if (neighbour.getUnvisited().size() == 0)
+        if (neighbour.getUnvisited().size() == 0) {
+            //System.out.println(neighbour.getCurrent().getName());
             return 0.0f;
-        else if (neighbour.getUnvisited().size() == 1)
-            return neighbour.getCurrent().getdMap().get(firstCity).getDist();
+        } else if (neighbour.getUnvisited().size() == 1)
+            return neighbour.getCurrent().getdMap().get(firstCity);
 
-        double dist1 = neighbour.getNearestDistFromUnvisited(neighbour.getCurrent()).getDist();
+        double dist1 = neighbour.getNearestDistFromUnvisited(neighbour.getCurrent());
         double dist2 = calculateMST(neighbour);
-        double dist3 = neighbour.getNearestDistFromUnvisited(firstCity).getDist();
+        double dist3 = neighbour.getNearestDistFromUnvisited(firstCity);
         return dist1 + dist2 + dist3;
-
-        /*
-        List<City> cities = new ArrayList<>(neighbour.getUnvisited());
-        List<Double> dists = new ArrayList<>();
-        for (City city : cities) {
-            dists.addAll(city.getdMap().values());
-        }
-        */
-        //return 0;
     }
-/*
-Set<City> unvisited = neighbour.getUnvisited();
-        double sum = 0.0f;
-        for (City city : unvisited) {
-            if (city == neighbour.getCurrent())
-                continue;
-            sum += neighbour.getNearestDistFromUnvisited(city).getDist();
-        }
-        return sum;
- */
+
     private double calculateMST(Node neighbour) {
         Set<City> unvisited = neighbour.getUnvisited();
         double sum = 0.0f;
+        City current = neighbour.getCurrent();
         for (City city : unvisited) {
-            if (city == neighbour.getCurrent())
+            if (city == current)
                 continue;
-            sum += neighbour.getNearestDistFromUnvisited(city).getDist();
+            sum += neighbour.getNearestDistFromUnvisited(city, current);
         }
         return sum;
     }
@@ -155,7 +140,6 @@ Set<City> unvisited = neighbour.getUnvisited();
         List<City> allCities = new ArrayList<>(unvisited);
         allCities.add(firstCity);
         City c1, c2;
-        Load load;
         double dist;
 
         for (int i = 0; i < allCities.size(); i++) {
@@ -167,9 +151,8 @@ Set<City> unvisited = neighbour.getUnvisited();
                 c2 = allCities.get(j);
 
                 dist = getCityDistance(c1, c2);
-                load = new Load(c1, c2, dist);
-                c1.addCityToMap(c2, load);
-                c2.addCityToMap(c1, load);
+                c1.addCityToMap(c2, dist);
+                c2.addCityToMap(c1, dist);
             }
         }
         sortEdges(allCities);
@@ -177,27 +160,15 @@ Set<City> unvisited = neighbour.getUnvisited();
 
     private void sortEdges(List<City> allCities) {
         for (City city : allCities) {
-            //System.out.println("City.. " + city.getName());
             city.setdMap(sortByValues(city.getdMap()));
-
-            /*
-            Set set2 = city.getdMap().entrySet();
-            Iterator iterator2 = set2.iterator();
-            while(iterator2.hasNext()) {
-                Map.Entry<City, Double> me2 = (Map.Entry)iterator2.next();
-                System.out.print(me2.getKey().getName() + ": ");
-                System.out.println(me2.getValue());
-            }
-            System.out.println(" ");
-            */
         }
     }
 
     private static HashMap sortByValues(Map map) {
         List list = new LinkedList(map.entrySet());
         // Defined Custom Comparator here
-        Collections.sort(list, (o1, o2) -> ((Comparable) ((Map.Entry<City, Load>) (o1)).getValue().getDist())
-                .compareTo(((Map.Entry<City, Load>) (o2)).getValue().getDist()));
+        Collections.sort(list, (o1, o2) -> ((Comparable) ((Map.Entry<City, Double>) (o1)).getValue())
+                .compareTo(((Map.Entry<City, Double>) (o2)).getValue()));
 
         // Here I am copying the sorted list in HashMap
         // using LinkedHashMap to preserve the insertion order
