@@ -82,18 +82,7 @@ public class Node {
                 return entry.getValue();
             }
         }
-        return Double.MAX_VALUE;
-    }
-
-    public double getNearestDistFromUnvisited(City city, City city2) {
-        Map<City, Double> map = city.getdMap();
-        for (Map.Entry<City, Double> entry : map.entrySet())
-        {
-            if (entry.getKey() != city2 && unvisited.contains(entry.getKey())) {
-                return entry.getValue();
-            }
-        }
-        return Double.MAX_VALUE;
+        return 0.0f;
     }
 
     public List<City> getPath() {

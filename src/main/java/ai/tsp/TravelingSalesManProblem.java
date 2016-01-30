@@ -113,10 +113,14 @@ public class TravelingSalesManProblem implements SearchProblem {
 
     private double heuristic(Node neighbour) {
         if (neighbour.getUnvisited().size() == 0) {
-            //System.out.println(neighbour.getCurrent().getName());
-            return 0.0f;
-        } else if (neighbour.getUnvisited().size() == 1)
+            if (neighbour.getCurrent() == firstCity) {
+                return 0.0f;
+            }
+
             return neighbour.getCurrent().getdMap().get(firstCity);
+        } else if (neighbour.getUnvisited().size() == 1) {
+            return neighbour.getCurrent().getdMap().get(firstCity);
+        }
 
         double dist1 = neighbour.getNearestDistFromUnvisited(neighbour.getCurrent());
         double dist2 = calculateMST(neighbour);
@@ -127,11 +131,8 @@ public class TravelingSalesManProblem implements SearchProblem {
     private double calculateMST(Node neighbour) {
         Set<City> unvisited = neighbour.getUnvisited();
         double sum = 0.0f;
-        City current = neighbour.getCurrent();
         for (City city : unvisited) {
-            if (city == current)
-                continue;
-            sum += neighbour.getNearestDistFromUnvisited(city, current);
+            sum += neighbour.getNearestDistFromUnvisited(city);
         }
         return sum;
     }
