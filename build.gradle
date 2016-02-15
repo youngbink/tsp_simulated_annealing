@@ -1,10 +1,10 @@
-group 'ai'
+group 'annealing'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin:'application'
-mainClassName = "ai.tsp.TravelingSalesManSolver"
+mainClassName = "annealing.tsp.TravelingSalesManSolver"
 
 compileJava {
     sourceCompatibility = '1.8'
